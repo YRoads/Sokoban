@@ -52,7 +52,6 @@ int Ma_x;	//人物x坐标
 int Ma_y;	//人物y坐标
 int Box_num = 0;	//储存白箱子数量
 int Box_x[30], Box_y[30];
-int* pSt_x = Box_x, * pSt_y = Box_y;
 int lev, length, width;	//关卡、行、列
 int yxc = 0;	//选关判定数据
 int zxw = 0;	//重开判定数据
@@ -142,8 +141,8 @@ void BoxS() {
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < length; j++) {
 			if (Sence[i][j] == 5) {
-				pSt_x[Box_num] = j;
-				pSt_y[Box_num] = i;
+				Box_x[Box_num] = j;
+				Box_y[Box_num] = i;
 				Box_num++;
 			}
 		}
@@ -225,8 +224,8 @@ void ConTCenter() {
 //更新白箱子状态
 void UpBox() {
 	for (int i = 0; i < Box_num; i++) {
-		if (Sence[pSt_y[i]][pSt_x[i]] == 0) {
-			Sence[pSt_y[i]][pSt_x[i]] = 5;
+		if (Sence[Box_y[i]][Box_x[i]] == 0) {
+			Sence[Box_y[i]][Box_x[i]] = 5;
 		}
 	}
 }
