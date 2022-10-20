@@ -34,6 +34,7 @@ YRoads
 9.11 添加音乐、图片，修复游戏算法错误
 9.12 添加重开功能，重写判定游戏获胜算法，增添自定义关卡功能
 选关目前用不了，模型会重叠
+预计10.10修复
 */
 
 
@@ -149,6 +150,15 @@ void BoxS() {
 	}
 }
 
+//清除白箱子坐标
+void clear_BoxS() {
+	for (int i = 0; i < Box_num; i++) {
+		Box_x[i] = 0;
+		Box_y[i] = 0;
+	}
+	Box_num = 0;
+}
+
 //获取人物所在坐标
 void ManS() {
 	for (int i = 0; i < width; i++) {
@@ -211,9 +221,10 @@ void ConTCenter() {
 		R = 1;
 		ConT(Ma_x, Ma_y, U, D, L, R);
 		break;
-		//case 'r':	//选择关卡
-		//	yxc = 520;
-		//	break;
+	case 'R':
+	case 'r':	//选择关卡
+		yxc = 520;
+		break;
 	case 'Q':
 	case 'q':	//重开
 		zxw = 1314;
@@ -242,10 +253,20 @@ int GameO(int width, int lenth) {
 
 int main() {
 	//载入美妙的音乐
-	/*mciSendString(_T("open soul.mp3 alias bkmusic"), NULL, 0, NULL);
-	mciSendString(_T("play bkmusic repeat"), NULL, 0, NULL);*/
+	//mciSendString(_T("open soul.mp3 alias bkmusic"), NULL, 0, NULL);
+	//mciSendString(_T("play bkmusic repeat"), NULL, 0, NULL);
 
 	while (1) {
+
+		//清除白箱子坐标
+		clear_BoxS();
+
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < length; j++) {
+				Sence[i][j] = 0;
+			}
+		}
+
 		FILE* psence = fopen("sence.txt", "r");
 		int Over = OpenSence(psence);	//打开sence文件(此处生成length和width)
 		if (Over == 0) { return 0; }
@@ -265,7 +286,15 @@ int main() {
 		//开始游戏
 		initgraph(length * 50, width * 50);
 		while (true) {
-			UpBox();	//更新白箱子状态
+			switch (yxc) {
+			case 520:
+				yxc = 0;
+				break;
+			default:
+				UpBox();
+				yxc = 0;
+				break;
+			}
 			//加载场景
 			for (int i = 0; i < width; i++) {
 				for (int j = 0; j < length; j++) {
@@ -298,7 +327,6 @@ int main() {
 
 			ConTCenter();	//控制中心
 			if (yxc == 520) {
-				yxc = 0;
 				break;
 			}		//重新选关1
 			if (zxw == 1314) {
@@ -315,8 +343,12 @@ int main() {
 
 	GameOver:	//跳转
 		//弹出通关图片
+		yxc = 520;	//刷新场上目标（这个修了我一个星期我焯）
 		putimage(0, 0, &WIN);
 		_getch();
+		cleardevice();
+		closegraph();
+		
 	}
 
 	return 0;
